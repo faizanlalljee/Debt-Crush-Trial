@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DebtCrush — Free Trial (4-Month Preview)</title>
+<style>
+  @font-face { font-family: 'Aptos'; src: local('Aptos'), local('Aptos-Regular'); font-weight: 400; }
+  @font-face { font-family: 'Aptos'; src: local('Aptos SemiBold'), local('Aptos-SemiBold'); font-weight: 600; }
+  @font-face { font-family: 'Aptos'; src: local('Aptos Bold'), local('Aptos-Bold'); font-weight: 700; }
+  @font-face { font-family: 'Aptos'; src: local('Aptos ExtraBold'), local('Aptos-ExtraBold'); font-weight: 800; }
+</style>
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #eeecea;
+    --border: #ccc9c3;
+    --text: #111116;
+    --muted: #4a4a55;
+    --accent: #a06800;
+    --accent2: #b52d2d;
+    --green: #146b42;
+    --blue: #1558a8;
+    --purple: #5233b0;
+    --mono: 'Aptos', 'Courier New', monospace;
+    --display: 'Aptos', 'Segoe UI', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--display);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.15;
+  }
+
+  /* ─── SCREENS ─────────────────────────────────── */
+  .screen { display: none; animation: fadeUp 0.5s ease forwards; }
+  .screen.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── HEADER ────────────────────────────────────── */
+  .header {
+    padding: 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(245,244,240,0.94);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+  }
+
+  .logo span { color: var(--accent); }
+
+  .period-badge {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 20px;
+    color: var(--muted);
+  }
+
+  .period-badge strong { color: var(--accent); }
+
+  /* Period dots */
+  .period-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .period-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: all 0.3s;
+  }
+
+  .period-dot.done { background: var(--green); }
+  .period-dot.current { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+
+  /* ─── INTRO ─────────────────────────────────────── */
+  #introScreen {
+    max-width: 700px;
+    margin: 60px auto;
+    padding: 0 24px;
+    text-align: center;
+  }
+
+  .intro-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .intro-title {
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+
+  .intro-title em {
+    font-style: normal;
+    color: var(--accent);
+    display: block;
+  }
+
+  .intro-body {
+    color: var(--muted);
+    line-height: 1.7;
+    font-size: 1rem;
+    font-family: var(--mono);
+    margin-bottom: 40px;
+  }
+
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+    text-align: left;
+  }
+
+  .scenario-tile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .scenario-tile-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .scenario-tile-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .scenario-tile-value.red { color: var(--accent2); }
+  .scenario-tile-value.green { color: var(--green); }
+
+  .debt-list {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 40px;
+    text-align: left;
+  }
+
+  .debt-list-header {
+    padding: 14px 20px;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    background: var(--surface2);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+  .debt-list-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    align-items: center;
+  }
+
+  .apr-tag {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .apr-high { background: #fde8e8; color: #8b1e1e; border: 1px solid #f5c0c0; }
+  .apr-mid  { background: #ede8fb; color: #3d2490; border: 1px solid #c9bcf5; }
+  .apr-low  { background: #e3f5ec; color: #0e5030; border: 1px solid #a8ddc2; }
+
+  /* ─── BUTTONS ─────────────────────────────────── */
+  .btn {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 32px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: -0.01em;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(200,136,10,0.3);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ─── GAME SCREEN ─────────────────────────────── */
+  #gameScreen { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 60%, rgba(0,0,0,0.015));
+  }
+
+  .stat-card-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  .stat-card-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    transition: all 0.4s;
+  }
+
+  .stat-card-value.accent { color: var(--accent); }
+  .stat-card-value.red    { color: var(--accent2); }
+  .stat-card-value.green  { color: var(--green); }
+  .stat-card-value.blue   { color: var(--blue); }
+
+  .stat-card-delta {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* Event banner */
+  .event-banner {
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    animation: slideBanner 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  @keyframes slideBanner {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .event-banner.bad  { background: #fdf0f0; border: 1px solid #e8b0b0; }
+  .event-banner.good { background: #eef9f4; border: 1px solid #9dd4bb; }
+  .event-banner.neutral { background: #eef4fd; border: 1px solid #9bbfe8; }
+
+  .event-icon { font-size: 2rem; line-height: 1; }
+
+  .event-title {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+
+  .event-banner.bad .event-title    { color: var(--accent2); }
+  .event-banner.good .event-title   { color: var(--green); }
+  .event-banner.neutral .event-title { color: var(--blue); }
+
+  .event-desc { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+  .event-impact {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 1rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* Debt cards */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+  }
+
+  .debts-grid {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .debt-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    transition: border-color 0.2s;
+  }
+
+  .debt-card:hover { border-color: #3a3a48; }
+  .debt-card.paid-off { opacity: 0.45; }
+
+  .debt-card.missed-payment {
+    border-color: rgba(181,45,45,0.5);
+    background: #fff8f8;
+  }
+
+  .missed-tag {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    background: #fde8e8;
+    color: #8b1e1e;
+    border: 1px solid #f5c0c0;
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+
+  .debt-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .debt-card-name {
+    font-weight: 700;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .debt-card-balance {
+    font-family: var(--mono);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+
+  .debt-card-balance.paid { color: var(--green); }
+
+  .debt-meta {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .meta-chip {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .meta-chip strong { color: var(--text); font-weight: 700; }
+
+  /* Progress bar */
+  .progress-track {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    background: linear-gradient(90deg, var(--green), #28c77a);
+  }
+
+  /* Payment slider area */
+  .payment-zone {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  .slider-wrap {
+    flex: 1;
+    position: relative;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: #d8d6d0;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 0 3px rgba(200,136,10,0.2);
+    transition: box-shadow 0.2s;
+  }
+
+  input[type=range]::-webkit-slider-thumb:hover {
+    box-shadow: 0 0 0 6px rgba(200,136,10,0.2);
+  }
+
+  .payment-display {
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 80px;
+    text-align: right;
+  }
+
+  .min-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+  }
+
+  /* Budget bar */
+  .budget-bar-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 28px;
+  }
+
+  .budget-bar-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .budget-bar-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .budget-remaining {
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    font-weight: 700;
+    transition: color 0.3s;
+  }
+
+  .budget-remaining.ok     { color: var(--green); }
+  .budget-remaining.warn   { color: var(--accent); }
+  .budget-remaining.danger { color: var(--accent2); }
+
+  .budget-track {
+    height: 8px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .budget-used {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s, background 0.3s;
+  }
+
+  /* ─── STICKY BUDGET BAR (mobile) ─────────────── */
+  .sticky-budget {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0; right: 0;
+    z-index: 200;
+    padding: 12px 16px;
+    background: rgba(245,244,240,0.97);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid var(--border);
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .sticky-budget.visible {
+    transform: translateY(0);
+  }
+
+  .sticky-budget-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .sticky-budget-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .sticky-budget-amount {
+    font-family: var(--mono);
+    font-size: 1rem;
+    font-weight: 700;
+    transition: color 0.3s;
+  }
+
+  .sticky-budget-amount.ok     { color: var(--green); }
+  .sticky-budget-amount.warn   { color: var(--accent); }
+  .sticky-budget-amount.danger { color: var(--accent2); }
+
+  .sticky-budget-track {
+    height: 5px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .sticky-budget-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s, background 0.3s;
+  }
+
+  .sticky-submit {
+    display: none;
+    width: 100%;
+    margin-top: 10px;
+    padding: 13px;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 640px) {
+    .sticky-budget { display: block; }
+    .sticky-submit { display: block; }
+    /* add bottom padding so content isn't hidden behind sticky bar */
+    #gameScreen { padding-bottom: 130px; }
+  }
+
+  /* Strategy tip */
+  .tip-box {
+    background: #f0ecfb;
+    border: 1px solid #c4b5f0;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 28px;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: #3d2490;
+    line-height: 1.5;
+    display: flex;
+    gap: 10px;
+  }
+
+  .actions-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  /* ─── STICKY END ACTIONS BAR ──────────────────── */
+  .end-actions-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 200;
+    padding: 14px 20px;
+    background: rgba(245,244,240,0.97);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid var(--border);
+    display: none;
+    gap: 10px;
+    justify-content: center;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+  }
+
+  .end-actions-bar.visible {
+    display: flex;
+  }
+
+  .end-actions-bar .btn {
+    flex: 1;
+    max-width: 220px;
+    text-align: center;
+  }
+
+  /* ─── EVENT MODAL ─────────────────────────────── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(6px);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    animation: modalPop 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes modalPop {
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-emoji { font-size: 4rem; margin-bottom: 16px; display: block; }
+
+  .modal-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 12px;
+  }
+
+  .modal-impact {
+    font-family: var(--mono);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 20px 0;
+  }
+
+  .modal-impact.bad  { color: var(--accent2); }
+  .modal-impact.good { color: var(--green); }
+
+  .modal-desc {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  /* ─── END SCREEN ──────────────────────────────── */
+  #endScreen {
+    max-width: 720px;
+    margin: 60px auto;
+    padding: 0 24px;
+    text-align: center;
+  }
+
+  .score-ring {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 6px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 32px;
+    position: relative;
+  }
+
+  .score-ring::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    padding: 6px;
+    background: conic-gradient(var(--green) var(--score-pct), var(--surface2) 0%);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), white 0);
+    mask: radial-gradient(farthest-side, transparent calc(100% - 6px), white 0);
+  }
+
+  .score-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .score-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .end-title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 12px;
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 32px 0;
+    text-align: left;
+  }
+
+  .result-tile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+  }
+
+  .result-tile-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+
+  .result-tile-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .lesson-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: left;
+    margin: 24px 0;
+  }
+
+  .lesson-box h3 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .lesson-box p {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* History timeline */
+  .history-section { margin: 32px 0; text-align: left; }
+
+  .history-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 1fr 1fr;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    align-items: center;
+  }
+
+  .history-row:first-child {
+    color: var(--muted);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .event-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.68rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+
+  .event-tag.bad  { background: #fde8e8; color: #8b1e1e; }
+  .event-tag.good { background: #e3f5ec; color: #0e5030; }
+  .event-tag.neutral { background: #eef4fd; color: #133d7a; }
+
+  @media (max-width: 600px) {
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .scenario-grid { grid-template-columns: 1fr; }
+    .debt-list-header, .debt-list-row { grid-template-columns: 1fr 1fr; }
+    .results-grid { grid-template-columns: 1fr; }
+    .header { padding: 16px 20px; }
+    #gameScreen { padding: 20px 16px; }
+  }
+
+  /* ─── TRIAL STYLES ────────────────────────────── */
+  .trial-banner {
+    background: #fff8ec;
+    border: 1px solid #f0d080;
+    border-radius: 10px;
+    padding: 12px 18px;
+    margin-bottom: 28px;
+    font-size: 0.85rem;
+    color: var(--text);
+    text-align: center;
+  }
+
+  .locked-modes-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    max-width: 480px;
+    margin: 0 auto 24px;
+  }
+
+  .locked-mode-card {
+    background: var(--surface2);
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+  }
+
+  .locked-overlay {
+    position: absolute;
+    top: 10px; right: 10px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    background: var(--border);
+    color: var(--muted);
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-family: var(--mono);
+    letter-spacing: 0.04em;
+  }
+
+  .trial-end-cta {
+    background: #fff8ec;
+    border: 2px solid var(--accent);
+    border-radius: 14px;
+    padding: 28px;
+    text-align: center;
+    margin: 32px 0;
+  }
+
+  .trial-end-cta h3 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .trial-end-cta p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-family: var(--mono);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  /* ─── DIFFICULTY CARDS ────────────────────────── */
+  .difficulty-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .diff-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+  }
+
+  .diff-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  }
+
+  .diff-card.active {
+    border-color: var(--accent);
+    background: #fff8ec;
+    box-shadow: 0 0 0 3px rgba(160,104,0,0.1);
+  }
+
+  .diff-card[data-diff="hard"].active {
+    border-color: var(--accent2);
+    background: #fff5f5;
+    box-shadow: 0 0 0 3px rgba(181,45,45,0.1);
+  }
+
+  .diff-card[data-diff="easy"].active {
+    border-color: var(--green);
+    background: #f0faf5;
+    box-shadow: 0 0 0 3px rgba(20,107,66,0.1);
+  }
+
+  .diff-icon { font-size: 1.6rem; margin-bottom: 8px; }
+
+  .diff-name {
+    font-weight: 800;
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: var(--text);
+  }
+
+  .diff-desc {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .diff-perks {
+    list-style: none;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .diff-perks li { color: var(--text); }
+
+  /* difficulty badge in header */
+  .diff-badge {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .diff-badge.easy   { background: #e3f5ec; color: #0e5030; }
+  .diff-badge.normal { background: #fff8ec; color: #a06800; }
+  .diff-badge.hard   { background: #fde8e8; color: #8b1e1e; }
+
+  @media (max-width: 600px) {
+    .difficulty-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Number counter animation */
+  .counting { transition: all 0.4s; }
+
+  .pulse { animation: pulse 0.6s ease; }
+  @keyframes pulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">DEBT<span>CRUSH</span> <span style="font-size:0.65rem;font-weight:500;color:var(--muted);letter-spacing:0.05em">TRIAL</span></div>
+  <div class="period-dots" id="periodDots"></div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <span class="diff-badge easy" id="headerDiffBadge">🌱 Easy</span>
+    <div class="period-badge">Month <strong id="headerPeriod">0</strong> / 4</div>
+  </div>
+</div>
+
+<!-- ─── INTRO SCREEN ──────────────────────────── -->
+<div id="introScreen" class="screen active">
+
+  <!-- Trial banner -->
+  <div class="trial-banner">
+    🎯 <strong>Free Trial</strong> — 4 months · Easy mode. Check for the full version in the store.
+  </div>
+
+  <div class="intro-eyebrow">Free Trial · Easy Mode</div>
+  <h1 class="intro-title">
+    Try DebtCrush
+    <em>4 Months Free.</em>
+  </h1>
+  <p class="intro-body">
+    Get a taste of the full game. You have <strong>4 months</strong> and $16,000 in debt. Life will throw a few surprises your way — see how smart allocation can make a real difference.
+  </p>
+
+  <!-- Locked Easy mode display -->
+  <div class="section-label" style="margin-bottom:12px;">Difficulty</div>
+  <div class="difficulty-grid" style="grid-template-columns:1fr;max-width:360px;margin:0 auto 24px">
+    <div class="diff-card active" data-diff="easy" style="cursor:default">
+      <div class="diff-icon">🌱</div>
+      <div class="diff-name">Easy <span style="font-size:0.7rem;color:var(--green);font-weight:600">✓ Trial Mode</span></div>
+      <div class="diff-desc">Stable income, mostly good events. Perfect for learning the basics.</div>
+      <ul class="diff-perks">
+        <li>✓ Higher income ($4,200/mo)</li>
+        <li>✓ 60% chance of good events</li>
+        <li>✓ Lower interest rates</li>
+        <li>✓ No job loss risk</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Locked modes teaser -->
+  <div class="locked-modes-row">
+    <div class="locked-mode-card">
+      <div class="locked-overlay">🔒 Full Version Only</div>
+      <div style="opacity:0.35">
+        <div style="font-size:1.4rem;margin-bottom:6px">⚖️</div>
+        <div style="font-weight:700;font-size:0.95rem;margin-bottom:4px">Normal</div>
+        <div style="font-size:0.72rem;color:var(--muted)">$3,500/mo · 18% APR · Mixed events · 10 months</div>
+      </div>
+    </div>
+    <div class="locked-mode-card">
+      <div class="locked-overlay">🔒 Full Version Only</div>
+      <div style="opacity:0.35">
+        <div style="font-size:1.4rem;margin-bottom:6px">🔥</div>
+        <div style="font-weight:700;font-size:0.95rem;margin-bottom:4px">Hard</div>
+        <div style="font-size:0.72rem;color:var(--muted)">$2,800/mo · 24% APR · Job loss risk · 10 months</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Static scenario preview for Easy -->
+  <div class="scenario-grid">
+    <div class="scenario-tile">
+      <div class="scenario-tile-label">Monthly Income</div>
+      <div class="scenario-tile-value green">$4,200</div>
+    </div>
+    <div class="scenario-tile">
+      <div class="scenario-tile-label">Fixed Expenses</div>
+      <div class="scenario-tile-value red">~$1,800</div>
+    </div>
+    <div class="scenario-tile">
+      <div class="scenario-tile-label">Trial Length</div>
+      <div class="scenario-tile-value accent">4 Months</div>
+    </div>
+    <div class="scenario-tile">
+      <div class="scenario-tile-label">Bad Event Chance</div>
+      <div class="scenario-tile-value green">30%</div>
+    </div>
+  </div>
+
+  <div class="debt-list">
+    <div class="debt-list-header">
+      <span>Debt</span>
+      <span>Balance</span>
+      <span>APR</span>
+      <span>Minimum</span>
+    </div>
+    <div class="debt-list-row">
+      <span>💳 Credit Card</span>
+      <span>$5,000</span>
+      <span><span class="apr-tag apr-mid">14%</span></span>
+      <span>$90/mo</span>
+    </div>
+    <div class="debt-list-row">
+      <span>🎓 Student Loan</span>
+      <span>$8,000</span>
+      <span><span class="apr-tag apr-low">5%</span></span>
+      <span>$75/mo</span>
+    </div>
+    <div class="debt-list-row">
+      <span>🏦 Personal Loan</span>
+      <span>$3,000</span>
+      <span><span class="apr-tag apr-low">9%</span></span>
+      <span>$65/mo</span>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" onclick="startGame()" style="width:100%;font-size:1rem;">
+    Start 4-Month Trial →
+  </button>
+
+  <div style="text-align:center;margin-top:14px;font-size:0.78rem;color:var(--muted);font-family:var(--mono)">
+    Want more? Check for the full version in the store.
+  </div>
+</div>
+
+<!-- ─── GAME SCREEN ───────────────────────────── -->
+<div id="gameScreen" class="screen">
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-card-label">Available Funds</div>
+      <div class="stat-card-value accent" id="statFunds">$1,700</div>
+      <div class="stat-card-delta" id="statFundsDelta"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">Total Debt</div>
+      <div class="stat-card-value red" id="statDebt">$16,000</div>
+      <div class="stat-card-delta" id="statDebtDelta"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">Credit Score</div>
+      <div class="stat-card-value green" id="statCredit">700</div>
+      <div class="stat-card-delta" id="statCreditDelta"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">Total Paid Off</div>
+      <div class="stat-card-value green" id="statPaid">$0</div>
+    </div>
+  </div>
+
+  <!-- Credit warning banner -->
+  <div id="creditWarningBanner"></div>
+
+  <!-- Life event banner -->
+  <div id="eventBanner"></div>
+
+  <!-- Budget bar -->
+  <div class="budget-bar-wrap">
+    <div class="budget-bar-top">
+      <div class="budget-bar-label">Budget Allocation</div>
+      <div class="budget-remaining ok" id="budgetRemaining">$1,700 left</div>
+    </div>
+    <div class="budget-track">
+      <div class="budget-used" id="budgetUsed" style="width:0%;background:var(--green)"></div>
+    </div>
+  </div>
+
+  <!-- Debts -->
+  <div class="section-label">Make Payment Decisions</div>
+  <div class="debts-grid" id="debtsGrid"></div>
+
+  <!-- Tip -->
+  <div class="tip-box" id="tipBox">
+    💡 <span id="tipText"></span>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions-row">
+    <button class="btn btn-primary" id="submitBtn" onclick="submitPeriod()">
+      End Month & Continue →
+    </button>
+  </div>
+
+</div>
+
+<!-- ─── END SCREEN ────────────────────────────── -->
+<div id="endScreen" class="screen">
+  <!-- filled dynamically -->
+</div>
+
+<!-- ─── STICKY BUDGET BAR (mobile) ──────────────── -->
+<div class="sticky-budget" id="stickyBudget">
+  <div class="sticky-budget-top">
+    <div class="sticky-budget-label">Budget Remaining</div>
+    <div class="sticky-budget-amount ok" id="stickyAmount">$1,700 left</div>
+  </div>
+  <div class="sticky-budget-track">
+    <div class="sticky-budget-fill" id="stickyFill" style="width:0%;background:var(--green)"></div>
+  </div>
+  <button class="btn btn-primary sticky-submit" id="stickySubmitBtn" onclick="submitPeriod()">
+    End Month & Continue →
+  </button>
+</div>
+
+<!-- ─── STICKY END ACTIONS BAR ────────────────── -->
+<div class="end-actions-bar" id="endActionsBar">
+  <button class="btn btn-ghost" onclick="switchScreen('introScreen');hideEndBar()">← Back to Intro</button>
+  <button class="btn btn-primary" onclick="restartGame();hideEndBar()">Play Again →</button>
+</div>
+
+<!-- ─── EVENT MODAL ───────────────────────────── -->
+<div id="eventModal" class="modal-overlay" style="display:none" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <span class="modal-emoji" id="modalEmoji">🎉</span>
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-impact" id="modalImpact"></div>
+    <div class="modal-desc" id="modalDesc"></div>
+    <button class="btn btn-primary" onclick="closeModal()" style="width:100%">Got It →</button>
+  </div>
+</div>
+
+<script>
+// ─── DIFFICULTY CONFIG ────────────────────────────────
+const DIFFICULTIES = {
+  easy: {
+    label: 'Easy', emoji: '🌱',
+    baseIncome: 4200,
+    baseExpenses: 1800,
+    badEventChance: 0.3,   // 30% bad events
+    goodEventBonus: 1.3,   // good events pay 30% more
+    badEventPenalty: 0.6,  // bad events cost 40% less
+    jobLossChance: 0,
+    debts: [
+      { id:1, emoji:'💳', name:'Credit Card',  balance:5000, orig:5000, rate:0.14, min:90,  payment:90  },
+      { id:2, emoji:'🎓', name:'Student Loan', balance:8000, orig:8000, rate:0.05, min:75,  payment:75  },
+      { id:3, emoji:'🏦', name:'Personal Loan',balance:3000, orig:3000, rate:0.09, min:65,  payment:65  },
+    ]
+  },
+  normal: {
+    label: 'Normal', emoji: '⚖️',
+    baseIncome: 3500,
+    baseExpenses: 1800,
+    badEventChance: 0.5,
+    goodEventBonus: 1.0,
+    badEventPenalty: 1.0,
+    jobLossChance: 0.05,   // 5% chance of income drop
+    debts: [
+      { id:1, emoji:'💳', name:'Credit Card',  balance:5000, orig:5000, rate:0.18, min:100, payment:100 },
+      { id:2, emoji:'🎓', name:'Student Loan', balance:8000, orig:8000, rate:0.06, min:80,  payment:80  },
+      { id:3, emoji:'🏦', name:'Personal Loan',balance:3000, orig:3000, rate:0.12, min:75,  payment:75  },
+    ]
+  },
+  hard: {
+    label: 'Hard', emoji: '🔥',
+    baseIncome: 2800,
+    baseExpenses: 1800,
+    badEventChance: 0.7,   // 70% bad events
+    goodEventBonus: 0.7,   // good events pay 30% less
+    badEventPenalty: 1.4,  // bad events cost 40% more
+    jobLossChance: 0.15,   // 15% chance of income drop
+    debts: [
+      { id:1, emoji:'💳', name:'Credit Card',  balance:5000, orig:5000, rate:0.24, min:120, payment:120 },
+      { id:2, emoji:'🎓', name:'Student Loan', balance:8000, orig:8000, rate:0.08, min:95,  payment:95  },
+      { id:3, emoji:'🏦', name:'Personal Loan',balance:3000, orig:3000, rate:0.16, min:90,  payment:90  },
+    ]
+  }
+};
+
+// ─── DATA ─────────────────────────────────────────────
+const LIFE_EVENTS = [
+  // BAD
+  { type:'bad', emoji:'🚗', title:'Car Broke Down', desc:'Unexpected repair to get back on the road.', range:[-700,-200] },
+  { type:'bad', emoji:'🏥', title:'Medical Bill', desc:'Out-of-pocket costs hit your wallet.', range:[-600,-150] },
+  { type:'bad', emoji:'💧', title:'Plumbing Emergency', desc:'Burst pipe — repairs needed immediately.', range:[-800,-250] },
+  { type:'bad', emoji:'📱', title:'Phone Replaced', desc:'Your phone died. Had to buy a replacement.', range:[-500,-150] },
+  { type:'bad', emoji:'🐾', title:'Vet Bills', desc:'Your pet needed emergency care.', range:[-450,-120] },
+  { type:'bad', emoji:'🔥', title:'Higher Utility Bill', desc:'Extreme weather spiked your energy bill.', range:[-300,-80] },
+  { type:'bad', emoji:'✈️', title:'Emergency Travel', desc:'Family situation required last-minute travel.', range:[-700,-200] },
+  { type:'bad', emoji:'💻', title:'Laptop Repair', desc:'Work laptop needed urgent service.', range:[-500,-150] },
+  // HARD-ONLY BAD
+  { type:'bad', emoji:'🦷', title:'Dental Emergency', desc:'Root canal with no insurance coverage.', range:[-900,-400], hardOnly:true },
+  { type:'bad', emoji:'🏚️', title:'Roof Leak', desc:'Major home repair — can\'t be ignored.', range:[-1100,-500], hardOnly:true },
+  { type:'bad', emoji:'⚖️', title:'Legal Fees', desc:'Unexpected legal situation required an attorney.', range:[-800,-350], hardOnly:true },
+  // GOOD
+  { type:'good', emoji:'💼', title:'Work Bonus!', desc:'Your performance was recognized this month.', range:[200,700] },
+  { type:'good', emoji:'🎁', title:'Birthday Gift (Cash)', desc:'Friends and family gave you cash this year.', range:[100,400] },
+  { type:'good', emoji:'🛒', title:'Side Hustle Payout', desc:'Your weekend gig paid off this month.', range:[150,500] },
+  { type:'good', emoji:'💰', title:'Tax Refund!', desc:'Your refund hit your account.', range:[300,900] },
+  { type:'good', emoji:'🏷️', title:'Sold Old Stuff', desc:'Sold furniture and clothes online.', range:[80,300] },
+  { type:'good', emoji:'🎰', title:'Won a Raffle', desc:'Small local prize came through!', range:[75,250] },
+  // NEUTRAL
+  { type:'neutral', emoji:'📦', title:'Subscription Audit', desc:'Cancelled unused subscriptions. Saved a little.', range:[40,100] },
+  { type:'neutral', emoji:'🌧️', title:'Quiet Month', desc:'Nothing unusual happened. Standard income.', range:[0,0] },
+  { type:'neutral', emoji:'🍽️', title:'Friends Covered Dinner', desc:'Saved on eating out this week.', range:[50,120] },
+];
+
+// Job loss events (hard mode only)
+const JOB_EVENTS = [
+  { type:'bad', emoji:'📉', title:'Pay Cut', desc:'Your hours were reduced this month.', range:[-400,-200] },
+  { type:'bad', emoji:'🏢', title:'Laid Off!', desc:'You lost your job. Emergency funds only this month.', range:[-700,-500] },
+  { type:'bad', emoji:'🤒', title:'Sick Leave', desc:'Unpaid sick days cut into your income.', range:[-300,-150] },
+];
+
+const TIPS = [
+  'High-interest debt costs the most over time. Pay it down faster!',
+  'The "Avalanche Method": pay minimums everywhere, max out your highest APR first.',
+  'The "Snowball Method": pay off the smallest balance first for a psychological win.',
+  'Even $50 extra on your credit card saves you months of interest.',
+  'Unexpected windfalls are best sent straight to high-interest debt.',
+  'Interest compounds monthly. Every dollar you pay early saves more later.',
+  'Avoid paying only minimums — you\'d be in debt for years.',
+  'In Hard mode, always keep a small buffer — emergencies are more frequent.',
+  'Missed payments trigger 1.5× penalty interest AND damage your credit score.',
+  'Credit score below 550? An emergency high-interest loan gets forced on you.',
+  'A good credit score (670+) keeps you from being trapped in expensive debt.',
+];
+
+// ─── TRIAL: LOCKED TO EASY, 4 PERIODS ────────────────
+const selectedDifficulty = 'easy';
+
+let G = {
+  period: 1,
+  totalPeriods: 4,
+  difficulty: 'easy',
+  baseIncome: 4200,
+  baseExpenses: 1800,
+  availableFunds: 0,
+  totalPaid: 0,
+  totalInterestPaid: 0,
+  creditScore: 700,
+  missedPayments: 0,
+  emergencyLoanAdded: false,
+  currentEvent: null,
+  history: [],
+  debts: []
+};
+
+function selectDifficulty() {} // locked — no-op
+
+// ─── INIT ─────────────────────────────────────────────
+function startGame() {
+  const cfg = DIFFICULTIES['easy'];
+  G = {
+    period: 1,
+    totalPeriods: 4,
+    difficulty: 'easy',
+    baseIncome: cfg.baseIncome,
+    baseExpenses: cfg.baseExpenses,
+    availableFunds: 0,
+    totalPaid: 0,
+    totalInterestPaid: 0,
+    creditScore: 700,
+    missedPayments: 0,
+    emergencyLoanAdded: false,
+    currentEvent: null,
+    history: [],
+    debts: cfg.debts.map(d => ({ ...d }))
+  };
+  switchScreen('gameScreen');
+  rollEventAndRender();
+}
+
+function rollEventAndRender() {
+  const cfg = DIFFICULTIES[G.difficulty];
+
+  // Check for job loss event (hard mode)
+  if (Math.random() < cfg.jobLossChance) {
+    const jobEv = JOB_EVENTS[Math.floor(Math.random() * JOB_EVENTS.length)];
+    const impact = Math.round((jobEv.range[0] + Math.random() * (jobEv.range[1] - jobEv.range[0])) / 10) * 10;
+    G.currentEvent = { ...jobEv, actualImpact: impact, isJobEvent: true };
+  } else {
+    // Filter events based on difficulty
+    let pool = LIFE_EVENTS.filter(e => G.difficulty === 'hard' || !e.hardOnly);
+
+    // Weight pool based on bad/good chance
+    const rand = Math.random();
+    let filtered;
+    if (rand < cfg.badEventChance) {
+      filtered = pool.filter(e => e.type === 'bad');
+    } else if (rand < cfg.badEventChance + (1 - cfg.badEventChance) * 0.5) {
+      filtered = pool.filter(e => e.type === 'good');
+    } else {
+      filtered = pool.filter(e => e.type === 'neutral');
+    }
+    if (!filtered.length) filtered = pool;
+
+    const ev = filtered[Math.floor(Math.random() * filtered.length)];
+    const range = ev.range;
+    let impact = range[0] === range[1] ? range[0]
+      : Math.round((range[0] + Math.random() * (range[1] - range[0])) / 10) * 10;
+
+    // Apply difficulty multipliers
+    if (impact < 0) impact = Math.round(impact * cfg.badEventPenalty / 10) * 10;
+    if (impact > 0) impact = Math.round(impact * cfg.goodEventBonus / 10) * 10;
+
+    G.currentEvent = { ...ev, actualImpact: impact };
+  }
+
+  // Calculate available funds — can be less than minimums (triggers missed payments)
+  const base = G.baseIncome - G.baseExpenses;
+  G.availableFunds = Math.max(0, base + G.currentEvent.actualImpact);
+
+  showEventModal(G.currentEvent);
+  updateDots();
+}
+
+function showEventModal(ev) {
+  document.getElementById('modalEmoji').textContent = ev.emoji;
+  document.getElementById('modalTitle').textContent = ev.title;
+  document.getElementById('modalDesc').textContent = ev.desc;
+
+  const imp = ev.actualImpact;
+  const impEl = document.getElementById('modalImpact');
+  if (imp === 0) {
+    impEl.textContent = 'No financial impact';
+    impEl.className = 'modal-impact';
+    impEl.style.color = 'var(--muted)';
+  } else {
+    impEl.textContent = (imp > 0 ? '+' : '') + '$' + Math.abs(imp).toLocaleString();
+    impEl.className = 'modal-impact ' + (imp > 0 ? 'good' : 'bad');
+    impEl.style.color = '';
+  }
+
+  document.getElementById('eventModal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('eventModal').style.display = 'none';
+  renderGameScreen();
+}
+
+function renderGameScreen() {
+  document.getElementById('headerPeriod').textContent = G.period;
+
+  // Stats
+  const totalDebt = G.debts.reduce((s,d)=>s+d.balance, 0);
+  const totalMinimums = G.debts.reduce((s,d)=> d.balance>0 ? s+d.min : s, 0);
+  const canCoverMins = G.availableFunds >= totalMinimums;
+
+  document.getElementById('statFunds').textContent = '$' + G.availableFunds.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0});
+  document.getElementById('statDebt').textContent  = '$' + totalDebt.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  document.getElementById('statPaid').textContent  = '$' + G.totalPaid.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  // Credit score display
+  const creditEl = document.getElementById('statCredit');
+  const creditDelta = document.getElementById('statCreditDelta');
+  creditEl.textContent = G.creditScore;
+  creditEl.className = 'stat-card-value ' + (G.creditScore >= 670 ? 'green' : G.creditScore >= 580 ? 'accent' : 'red');
+  creditDelta.textContent = getCreditRating(G.creditScore);
+
+  // Credit warning banner
+  const warnBanner = document.getElementById('creditWarningBanner');
+  if (!canCoverMins) {
+    const shortage = totalMinimums - G.availableFunds;
+    warnBanner.innerHTML = `
+      <div class="event-banner bad" style="margin-bottom:20px">
+        <div class="event-icon">⚠️</div>
+        <div>
+          <div class="event-title" style="color:var(--accent2)">Can't Cover Minimum Payments!</div>
+          <div class="event-desc">You're $${shortage.toFixed(0)} short of all minimums this month. Missed payments will damage your credit score. Pay what you can — the rest will be recorded as missed.</div>
+        </div>
+      </div>
+    `;
+  } else {
+    warnBanner.innerHTML = '';
+  }
+
+  // Event banner
+  const ev = G.currentEvent;
+  const banner = document.getElementById('eventBanner');
+  if (ev) {
+    const sign = ev.actualImpact > 0 ? '+' : '';
+    const impStr = ev.actualImpact === 0 ? 'No change' : sign + '$' + Math.abs(ev.actualImpact).toLocaleString();
+    banner.innerHTML = `
+      <div class="event-banner ${ev.type}">
+        <div class="event-icon">${ev.emoji}</div>
+        <div>
+          <div class="event-title">${ev.title}</div>
+          <div class="event-desc">${ev.desc}</div>
+        </div>
+        <div class="event-impact" style="color:${ev.type==='bad'?'var(--accent2)':ev.type==='good'?'var(--green)':'var(--blue)'}">${impStr} this month</div>
+      </div>
+    `;
+  }
+
+  // Tip
+  document.getElementById('tipText').textContent = TIPS[Math.floor(Math.random() * TIPS.length)];
+
+  // Reset payments — capped to what's actually available
+  let remaining = G.availableFunds;
+  G.debts.forEach(d => {
+    if (d.balance > 0) {
+      const pay = Math.min(d.min, remaining);
+      d.payment = pay;
+      remaining = Math.max(0, remaining - pay);
+    } else {
+      d.payment = 0;
+    }
+  });
+
+  renderDebts();
+  updateBudget();
+  requestAnimationFrame(() => initStickyBudget());
+}
+
+function renderDebts() {
+  const grid = document.getElementById('debtsGrid');
+  grid.innerHTML = '';
+
+  G.debts.forEach(debt => {
+    const pct = Math.min(100, ((debt.orig - debt.balance) / debt.orig * 100));
+    const isPaidOff = debt.balance <= 0;
+    const isMissed = !isPaidOff && debt.payment < debt.min;
+
+    const card = document.createElement('div');
+    card.className = 'debt-card' + (isPaidOff ? ' paid-off' : '') + (isMissed ? ' missed-payment' : '');
+    card.id = 'card-' + debt.id;
+
+    let aprClass = debt.rate >= 0.15 ? 'apr-high' : debt.rate >= 0.10 ? 'apr-mid' : 'apr-low';
+
+    card.innerHTML = `
+      <div class="debt-card-top">
+        <div class="debt-card-name">
+          <span>${debt.emoji}</span>
+          ${debt.name}
+          <span class="apr-tag ${aprClass}">${(debt.rate*100).toFixed(0)}% APR</span>
+          ${isMissed ? '<span class="missed-tag">⚠️ Missed</span>' : ''}
+        </div>
+        <div class="debt-card-balance ${isPaidOff ? 'paid' : ''}">
+          ${isPaidOff ? '✓ PAID OFF' : '$' + debt.balance.toFixed(2)}
+        </div>
+      </div>
+      <div class="debt-meta">
+        <div class="meta-chip">Min payment: <strong>$${debt.min}</strong></div>
+        <div class="meta-chip">Monthly interest: <strong>$${(debt.balance*(debt.rate/12)).toFixed(2)}</strong></div>
+        <div class="meta-chip">Paid off: <strong>${pct.toFixed(1)}%</strong></div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:${pct}%"></div>
+      </div>
+      ${!isPaidOff ? `
+        <div class="payment-zone">
+          <div class="slider-wrap">
+            <input type="range" id="slider-${debt.id}"
+              min="0"
+              max="${Math.floor(Math.min(debt.balance, Math.max(G.availableFunds, debt.payment)))}"
+              step="10"
+              value="${debt.payment}"
+              oninput="onSlider(${debt.id}, this.value)">
+            <div class="min-label">
+              <span style="color:${isMissed?'var(--accent2)':''}">Min: $${debt.min}${isMissed?' ⚠️':''}</span>
+              <span>Max: $${Math.floor(Math.min(debt.balance, G.availableFunds)).toLocaleString()}</span>
+            </div>
+          </div>
+          <div class="payment-display" id="pd-${debt.id}" style="color:${isMissed?'var(--accent2)':'var(--accent)'}">$${debt.payment.toFixed(0)}</div>
+        </div>
+      ` : '<div style="text-align:center;color:var(--green);font-family:var(--mono);font-size:0.8rem;margin-top:8px;">🎉 Fully paid off!</div>'}
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
+function onSlider(debtId, rawVal) {
+  const debt = G.debts.find(d => d.id === debtId);
+  const val = Math.min(parseFloat(rawVal), debt.balance);
+  debt.payment = val;
+
+  // Redistribute: check total doesn't exceed available
+  const totalUsed = G.debts.reduce((s,d) => d.balance > 0 ? s + d.payment : s, 0);
+  if (totalUsed > G.availableFunds) {
+    debt.payment = Math.max(0, val - (totalUsed - G.availableFunds));
+  }
+
+  document.getElementById('pd-' + debtId).textContent = '$' + debt.payment.toFixed(0);
+  const isMissed = debt.payment < debt.min && debt.balance > 0;
+  document.getElementById('pd-' + debtId).style.color = isMissed ? 'var(--accent2)' : 'var(--accent)';
+  updateBudget();
+}
+
+function updateBudget() {
+  const used = G.debts.reduce((s,d) => d.balance > 0 ? s + d.payment : s, 0);
+  const rem  = G.availableFunds - used;
+  const pct  = G.availableFunds > 0 ? Math.min(100, (used / G.availableFunds) * 100) : 100;
+
+  const remEl  = document.getElementById('budgetRemaining');
+  const usedEl = document.getElementById('budgetUsed');
+
+  const remText  = rem >= 0 ? '$' + rem.toFixed(0) + ' left' : '-$' + Math.abs(rem).toFixed(0) + ' OVER BUDGET';
+  const remClass = rem < 0 ? 'danger' : rem < 100 ? 'ok' : 'warn';
+  const barColor = rem < 0 ? 'var(--accent2)' : rem < 150 ? 'var(--accent)' : 'var(--green)';
+
+  remEl.textContent = remText;
+  remEl.className = 'budget-remaining ' + remClass;
+  usedEl.style.width = pct + '%';
+  usedEl.style.background = barColor;
+
+  const stickyAmount = document.getElementById('stickyAmount');
+  const stickyFill   = document.getElementById('stickyFill');
+  const stickySubmit = document.getElementById('stickySubmitBtn');
+  if (stickyAmount) {
+    stickyAmount.textContent = remText;
+    stickyAmount.className = 'sticky-budget-amount ' + remClass;
+    stickyFill.style.width = pct + '%';
+    stickyFill.style.background = barColor;
+    stickySubmit.disabled = rem < 0;
+  }
+
+  // Only disable if genuinely over budget (spending more than available)
+  document.getElementById('submitBtn').disabled = rem < 0;
+}
+
+// ─── CREDIT SCORE HELPERS ─────────────────────────────
+function getCreditRating(score) {
+  if (score >= 740) return 'Excellent';
+  if (score >= 670) return 'Good';
+  if (score >= 580) return 'Fair';
+  if (score >= 500) return 'Poor';
+  return 'Very Poor';
+}
+
+function getCreditColor(score) {
+  if (score >= 670) return 'var(--green)';
+  if (score >= 580) return 'var(--accent)';
+  return 'var(--accent2)';
+}
+
+function showConsequenceModal(record, callback) {
+  const hasEmergencyLoan = record.emergencyLoanAdded;
+  const hasMissed = record.missedDebts.length > 0;
+  const scoreDrop = record.creditScoreBefore - record.creditScoreAfter;
+
+  let emoji, title, desc, extra = '';
+
+  if (hasEmergencyLoan) {
+    emoji = '🚨';
+    title = 'Emergency Loan Forced!';
+    desc = `Your credit score dropped to ${record.creditScoreAfter} (${getCreditRating(record.creditScoreAfter)}). Lenders added a $2,000 emergency loan at ${(record.emergencyLoanAdded.rate*100).toFixed(0)}% APR to cover your shortfall. This is the debt spiral in action.`;
+    extra = `<div style="margin:12px 0;padding:12px;background:#fde8e8;border-radius:8px;font-family:monospace;font-size:0.8rem;color:#8b1e1e">🚨 Emergency Loan: $2,000 at ${(record.emergencyLoanAdded.rate*100).toFixed(0)}% APR added to your debts</div>`;
+  } else if (hasMissed) {
+    emoji = '📉';
+    title = `Missed Payment${record.missedDebts.length > 1 ? 's' : ''}!`;
+    desc = `You couldn't meet the minimum on: ${record.missedDebts.join(', ')}. Penalty interest (1.5×) was charged and your credit score dropped by ${scoreDrop} points.`;
+    extra = `<div style="margin:12px 0;padding:12px;background:#fff8ec;border-radius:8px;font-family:monospace;font-size:0.8rem;color:#a06800">📊 Credit Score: ${record.creditScoreBefore} → ${record.creditScoreAfter} (${getCreditRating(record.creditScoreAfter)})</div>`;
+  }
+
+  // Reuse event modal
+  document.getElementById('modalEmoji').textContent = emoji;
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalDesc').innerHTML = desc + extra;
+  const impEl = document.getElementById('modalImpact');
+  impEl.textContent = `Score: ${record.creditScoreAfter}`;
+  impEl.className = 'modal-impact bad';
+  impEl.style.color = getCreditColor(record.creditScoreAfter);
+
+  const btn = document.querySelector('#eventModal .btn');
+  btn.textContent = hasEmergencyLoan ? 'Understood — Continue' : 'Got It →';
+  btn.onclick = () => {
+    document.getElementById('eventModal').style.display = 'none';
+    // Restore button
+    btn.textContent = 'Got It →';
+    btn.onclick = closeModal;
+    callback();
+  };
+
+  document.getElementById('eventModal').style.display = 'flex';
+}
+
+// ─── INTERSECTION OBSERVER for sticky bar ────────────
+let _budgetObserver = null;
+function initStickyBudget() {
+  const anchor = document.querySelector('.budget-bar-wrap');
+  const sticky  = document.getElementById('stickyBudget');
+  if (!anchor || !sticky) return;
+
+  if (_budgetObserver) _budgetObserver.disconnect();
+
+  _budgetObserver = new IntersectionObserver(entries => {
+    const isVisible = entries[0].isIntersecting;
+    // Show sticky bar only when original budget bar has scrolled out of view
+    sticky.classList.toggle('visible', !isVisible);
+  }, { threshold: 0, rootMargin: '0px 0px 0px 0px' });
+
+  _budgetObserver.observe(anchor);
+}
+
+function submitPeriod() {
+  const used = G.debts.reduce((s,d) => d.balance>0?s+d.payment:s, 0);
+  if (used > G.availableFunds) return;
+
+  const record = {
+    period: G.period,
+    event: G.currentEvent,
+    funds: G.availableFunds,
+    payments: {},
+    interest: {},
+    balances: {},
+    missedDebts: [],
+    creditScoreBefore: G.creditScore
+  };
+
+  let missedThisPeriod = 0;
+
+  G.debts.forEach(debt => {
+    if (debt.balance > 0) {
+      const monthlyInterest = +(debt.balance * (debt.rate / 12)).toFixed(2);
+      const payment = Math.min(debt.payment, debt.balance);
+      const wasMissed = payment < debt.min;
+
+      if (wasMissed) {
+        missedThisPeriod++;
+        G.missedPayments++;
+        record.missedDebts.push(debt.name);
+        // Penalty interest: 1.5x interest on missed payments
+        const penaltyInterest = monthlyInterest * 1.5;
+        const newBalance = Math.max(0, debt.balance - payment + penaltyInterest);
+        debt.balance = newBalance;
+        G.totalInterestPaid += penaltyInterest;
+        record.interest[debt.name] = penaltyInterest;
+      } else {
+        const newBalance = Math.max(0, debt.balance - payment + monthlyInterest);
+        debt.balance = newBalance;
+        G.totalInterestPaid += monthlyInterest;
+        record.interest[debt.name] = monthlyInterest;
+      }
+
+      G.totalPaid += payment;
+      record.payments[debt.name] = payment;
+      record.balances[debt.name] = debt.balance;
+      debt.payment = debt.balance > 0 ? debt.min : 0;
+    }
+  });
+
+  // Apply credit score damage
+  if (missedThisPeriod > 0) {
+    const drop = missedThisPeriod * 40 + (G.missedPayments > 2 ? 20 : 0);
+    G.creditScore = Math.max(300, G.creditScore - drop);
+  } else if (G.creditScore < 700) {
+    // Slow recovery for on-time payments
+    G.creditScore = Math.min(700, G.creditScore + 8);
+  }
+  record.creditScoreAfter = G.creditScore;
+
+  // Trigger emergency loan if credit score tanks below 550 and not added yet
+  if (G.creditScore < 550 && !G.emergencyLoanAdded) {
+    G.emergencyLoanAdded = true;
+    const emergencyRate = G.difficulty === 'hard' ? 0.36 : G.difficulty === 'normal' ? 0.29 : 0.24;
+    const loanAmount = 2000;
+    const newId = Math.max(...G.debts.map(d=>d.id)) + 1;
+    G.debts.push({
+      id: newId,
+      emoji: '🚨',
+      name: 'Emergency Loan',
+      balance: loanAmount,
+      orig: loanAmount,
+      rate: emergencyRate,
+      min: Math.round(loanAmount * 0.05),
+      payment: Math.round(loanAmount * 0.05),
+      isEmergencyLoan: true
+    });
+    record.emergencyLoanAdded = { amount: loanAmount, rate: emergencyRate };
+  }
+
+  G.history.push(record);
+  G.period++;
+
+  const remaining = G.debts.reduce((s,d)=>s+d.balance, 0);
+
+  if (G.period > G.totalPeriods || remaining <= 0) {
+    // Show credit consequence modal if there were missed payments
+    if (record.missedDebts.length > 0 || record.emergencyLoanAdded) {
+      showConsequenceModal(record, () => endGame());
+    } else {
+      endGame();
+    }
+  } else {
+    if (record.missedDebts.length > 0 || record.emergencyLoanAdded) {
+      showConsequenceModal(record, () => rollEventAndRender());
+    } else {
+      rollEventAndRender();
+    }
+  }
+}
+
+// ─── END GAME ─────────────────────────────────────────
+function endGame() {
+  switchScreen('endScreen');
+  document.getElementById('endActionsBar').classList.add('visible');
+  document.getElementById('endScreen').style.paddingBottom = '100px';
+  const el = document.getElementById('endScreen');
+
+  const origTotal = G.debts.reduce((s,d)=>s+d.orig, 0);
+  const remaining = G.debts.reduce((s,d)=>s+d.balance, 0);
+  const paidPrincipal = origTotal - remaining;
+  const pctPaid = (paidPrincipal / origTotal * 100);
+  const score = Math.round(pctPaid);
+  const allGone = remaining <= 0;
+
+  // Grade
+  const grade = pctPaid >= 90 ? 'A+' : pctPaid >= 75 ? 'A' : pctPaid >= 60 ? 'B' : pctPaid >= 45 ? 'C' : 'D';
+  const gradeColor = pctPaid >= 75 ? 'var(--green)' : pctPaid >= 50 ? 'var(--accent)' : 'var(--accent2)';
+
+  // History table
+  let histHTML = `
+    <div class="history-row">
+      <span>MONTH</span><span>EVENT</span><span>FUNDS</span><span>PAID</span>
+    </div>
+  `;
+  G.history.forEach(h => {
+    const totalPmt = Object.values(h.payments).reduce((a,b)=>a+b,0);
+    histHTML += `
+      <div class="history-row">
+        <span>${h.period}</span>
+        <span><span class="event-tag ${h.event.type}">${h.event.emoji} ${h.event.title.split(' ').slice(0,2).join(' ')}</span></span>
+        <span>$${h.funds.toFixed(0)}</span>
+        <span>$${totalPmt.toFixed(0)}</span>
+      </div>
+    `;
+  });
+
+  el.innerHTML = `
+    <div class="intro-eyebrow">Simulation Complete · ${DIFFICULTIES[G.difficulty].emoji} ${DIFFICULTIES[G.difficulty].label} Mode</div>
+
+    <div class="score-ring" style="--score-pct:${pctPaid.toFixed(1)}%">
+      <div class="score-value" style="color:${gradeColor}">${grade}</div>
+      <div class="score-label">Grade</div>
+    </div>
+
+    <h2 class="end-title">${allGone ? '🎉 Debt Free!' : pctPaid >= 60 ? '💪 Great Progress' : '📈 Keep Going'}</h2>
+    <p style="color:var(--muted);font-family:var(--mono);font-size:0.85rem;line-height:1.6;margin-bottom:24px">
+      ${allGone
+        ? 'You eliminated all your debt in 10 months. Outstanding financial discipline!'
+        : `You paid off ${pctPaid.toFixed(1)}% of your debt in 10 months. That's $${paidPrincipal.toFixed(0)} down!`
+      }
+    </p>
+
+    <div class="results-grid">
+      <div class="result-tile">
+        <div class="result-tile-label">Debt Paid Off</div>
+        <div class="result-tile-value" style="color:var(--green)">$${paidPrincipal.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',')}</div>
+      </div>
+      <div class="result-tile">
+        <div class="result-tile-label">Remaining Debt</div>
+        <div class="result-tile-value" style="color:${remaining>0?'var(--accent2)':'var(--green)'}">$${remaining.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',')}</div>
+      </div>
+      <div class="result-tile">
+        <div class="result-tile-label">Final Credit Score</div>
+        <div class="result-tile-value" style="color:${getCreditColor(G.creditScore)}">${G.creditScore} <span style="font-size:0.8rem;font-weight:400">${getCreditRating(G.creditScore)}</span></div>
+      </div>
+      <div class="result-tile">
+        <div class="result-tile-label">Missed Payments</div>
+        <div class="result-tile-value" style="color:${G.missedPayments>0?'var(--accent2)':'var(--green)'}">${G.missedPayments} <span style="font-size:0.8rem;font-weight:400">${G.missedPayments===0?'Clean record!':'payments missed'}</span></div>
+      </div>
+    </div>
+
+    <div class="lesson-box">
+      <h3>💡 Key Takeaway</h3>
+      <p>${getLessons(pctPaid, G.totalInterestPaid)}</p>
+    </div>
+
+    <div class="history-section">
+      <div class="section-label">Month-by-Month History</div>
+      ${histHTML}
+    </div>
+
+    <div class="trial-end-cta">
+      <h3>🎯 Enjoyed the trial?</h3>
+      <p>Check for the full version in the store.</p>
+    </div>
+
+    <div class="actions-row" style="justify-content:center;margin-top:16px;gap:14px;padding-bottom:8px">
+      <button class="btn btn-primary" onclick="restartGame()">Play Trial Again →</button>
+      <button class="btn btn-ghost" onclick="switchScreen('introScreen');hideEndBar()">← Back to Start</button>
+    </div>
+  `;
+}
+
+function getLessons(pct, interestPaid) {
+  const diff = G.difficulty;
+  if (pct >= 90) return `Incredible${diff === 'hard' ? ' — especially on Hard mode!' : '!'} You focused extra payments on high-interest debt and it paid off. You paid only $${interestPaid.toFixed(0)} in interest — much less than someone paying minimums.`;
+  if (pct >= 65) {
+    if (diff === 'hard') return `Impressive on Hard mode! Life hit you hard this round. Next time, consider keeping a small cash buffer for emergencies so bad events don't derail your debt payments.`;
+    return `Good work! To do better next time, target your highest APR debt with every spare dollar. Paying it off first saves the most money over time.`;
+  }
+  if (pct >= 40) {
+    if (diff === 'hard') return `Hard mode is brutal — job losses and big emergencies change everything. Try building a $500 emergency buffer before aggressively paying debt.`;
+    return `You're on the right track but life events hit hard. Consider building a small emergency fund (~$500) so surprises don't derail debt payments.`;
+  }
+  if (diff === 'easy') return `Even on Easy mode, debt is tricky! Try the Avalanche method next time — every spare dollar to your highest interest rate first.`;
+  if (diff === 'hard') return `Hard mode is designed to be brutal. Real financial resilience requires an emergency fund AND a debt strategy. Try Normal mode to build your skills first.`;
+  return `Debt is tough! The key insight: paying only minimums means you're losing money to interest every month. Even $50 extra toward high-APR debt makes a real difference.`;
+}
+
+// ─── UTILITIES ────────────────────────────────────────
+function switchScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function updateDots() {
+  const wrap = document.getElementById('periodDots');
+  wrap.innerHTML = '';
+  for (let i = 1; i <= G.totalPeriods; i++) {
+    const d = document.createElement('div');
+    d.className = 'period-dot' + (i < G.period ? ' done' : i === G.period ? ' current' : '');
+    wrap.appendChild(d);
+  }
+}
+
+function hideEndBar() {
+  document.getElementById('endActionsBar').classList.remove('visible');
+}
+
+function restartGame() {
+  hideEndBar();
+  switchScreen('introScreen');
+}
+
+// Trial version — Easy mode locked, 4 periods only
+</script>
+</body>
+</html>
